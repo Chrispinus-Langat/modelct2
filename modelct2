@@ -1,0 +1,44 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
+
+# Simulate synthetic student data
+np.random.seed(42)
+num_students = 1000
+
+data = {
+    'GPA': np.random.uniform(2.0, 4.0, num_students),
+    'SAT_Score': np.random.randint(800, 1600, num_students),
+    'Socioeconomic_Status': np.random.choice(['Low', 'Medium', 'High'], num_students),
+    'Attendance_Rate': np.random.uniform(0.5, 1.0, num_students),
+    'Extracurricular_Activities': np.random.randint(0, 5, num_students),
+    'Enrolled': np.random.choice([0, 1], num_students, p=[0.4, 0.6])  # 60% enrolled
+}
+
+# Create a DataFrame
+df = pd.DataFrame(data)
+
+# Convert categorical variables to numerical
+df['Socioeconomic_Status'] = df['Socioeconomic_Status'].map({'Low': 0, 'Medium': 1, 'High': 2})
+
+# Features and target variable
+X = df.drop('Enrolled', axis=1)
+y = df['Enrolled']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Initialize and train the model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
